@@ -92,4 +92,13 @@ def error():
     return render_template("error.html")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        print("GitHub Actions: Running quick Flask startup test")
+        app.testing = True
+        with app.test_client() as client:
+            res = client.get("/")
+            assert res.status_code == 200
+            print("Home page loaded successfully")
+    else:
+        app.run(debug=True)
+
